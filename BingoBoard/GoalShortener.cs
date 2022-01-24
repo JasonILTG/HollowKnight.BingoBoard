@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace BingoUI.Board
+namespace BingoBoard
 {
     public class GoalShortener
     {

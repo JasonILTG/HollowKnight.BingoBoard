@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using Logger = Modding.Logger;
 
-namespace BingoUI.Board
+namespace BingoBoard
 {
     public class BingoSync : MonoBehaviour
     {
