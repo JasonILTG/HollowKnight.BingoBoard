@@ -13,6 +13,10 @@ namespace BingoBoard
 {
     public class BingoSync : MonoBehaviour
     {
+        #region Setup
+        private static BingoSync _instance;
+        private GameObject _canvas;
+
         public static void Setup()
         {
             GameObject go = new GameObject("Bingo Board");
@@ -25,30 +29,6 @@ namespace BingoBoard
             Destroy(_instance._canvas);
             Destroy(_instance.gameObject);
         }
-
-        private static BingoSync _instance;
-        private NonBouncer _nb;
-        private GameObject _canvas;
-
-        private GameObject menu;
-        private GameObject roomIDText;
-        private string _roomID;
-
-        private GameObject toggleKeyButton;
-        private bool setToggle;
-        private KeyCode toggle;
-
-        private GameObject board;
-
-        private GameObject[] goals;
-        private GameObject[] goalNames;
-        private GameObject[,] goalColors;
-        private string[] colors;
-        private GameObject[] star;
-
-        private const int GOAL_COLOR_DIVISIONS = 20;
-        private readonly string[] COLOR_ORDER = { "pink", "red", "orange", "brown", "yellow", "green", "teal", "blue", "navy", "purple" };
-        private readonly Color[] HIGHLIGHT_CYCLE = { Color.white, Color.red, Color.green, Color.blue };
 
         public static BingoSync Instance
         {
@@ -69,7 +49,31 @@ namespace BingoBoard
                 return _instance;
             }
         }
+        #endregion
 
+        private NonBouncer _nb;
+
+        private GameObject menu;
+        private GameObject board;
+
+        private GameObject roomIDText;
+        private string _roomID;
+
+        private GameObject toggleKeyButton;
+        private bool setToggle;
+        private KeyCode toggle;
+
+        private GameObject[] goals;
+        private GameObject[] goalNames;
+        private GameObject[,] goalColors;
+        private string[] colors;
+        private GameObject[] star;
+
+        private const int GOAL_COLOR_DIVISIONS = 20;
+        private readonly string[] COLOR_ORDER = { "pink", "red", "orange", "brown", "yellow", "green", "teal", "blue", "navy", "purple" };
+        private readonly Color[] HIGHLIGHT_CYCLE = { Color.white, Color.red, Color.green, Color.blue };
+
+        #region Initialization
         public void Initialize()
         {
             _canvas = CanvasUtil.CreateCanvas(RenderMode.ScreenSpaceCamera, new Vector2(1920, 1080));
@@ -187,6 +191,20 @@ namespace BingoBoard
             _nb.StartCoroutine(ConstantRefresh(5f));
         }
 
+        private void CycleTextHighlight(int i)
+        {
+            Text t = goalNames[i].GetComponent<Text>();
+            for (int c = 0; c < HIGHLIGHT_CYCLE.Length; c++) {
+                if (HIGHLIGHT_CYCLE[c] == t.color) {
+                    t.color = HIGHLIGHT_CYCLE[(c + 1) % HIGHLIGHT_CYCLE.Length];
+                    return;
+                }
+            }
+            t.color = Color.white;
+        }
+        #endregion
+
+        #region Update
         public void Update()
         {
             try {
@@ -223,7 +241,9 @@ namespace BingoBoard
             setToggle = true;
             toggleKeyButton.GetComponent<Text>().text = "Toggle: PRESS A KEY";
         }
+        #endregion
 
+        #region RefreshBoard
         private IEnumerator ConstantRefresh(float delay)
         {
             while (true) {
@@ -287,24 +307,6 @@ namespace BingoBoard
             }
         }
 
-        private void CycleTextHighlight(int i)
-        {
-            Text t = goalNames[i].GetComponent<Text>();
-            for (int c = 0; c < HIGHLIGHT_CYCLE.Length; c++) {
-                if (HIGHLIGHT_CYCLE[c] == t.color) {
-                    t.color = HIGHLIGHT_CYCLE[(c + 1) % HIGHLIGHT_CYCLE.Length];
-                    return;
-                }
-            }
-            t.color = Color.white;
-        }
-
-        private string substring_between(string a, string b, string c)
-        {
-            string t = a.Substring(a.IndexOf(b) + b.Length);
-            return t.Substring(0, t.IndexOf(c));
-        }
-
         private string[] sortColors(string color)
         {
             string[] unsorted = color.Split(' ');
@@ -322,6 +324,13 @@ namespace BingoBoard
             }
 
             return sorted;
+        }
+        #endregion
+
+        private string substring_between(string a, string b, string c)
+        {
+            string t = a.Substring(a.IndexOf(b) + b.Length);
+            return t.Substring(0, t.IndexOf(c));
         }
 
         private string sanitizeID(string id)
