@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>BingoBoard</RootNamespace>
     <AssemblyTitle>BingoBoard</AssemblyTitle>
-    <AssemblyVersion>2.1.2.1</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Deterministic>true</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
