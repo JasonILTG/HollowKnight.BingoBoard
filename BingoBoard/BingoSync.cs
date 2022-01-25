@@ -269,7 +269,7 @@ namespace BingoBoard
         private IEnumerator ConstantRefresh(float delay)
         {
             while (true) {
-                if (board.activeSelf) yield return _nb.StartCoroutine(RefreshBoard(_roomID));
+                yield return _nb.StartCoroutine(RefreshBoard(_roomID));
                 yield return new WaitForSeconds(delay);
             }
         }
