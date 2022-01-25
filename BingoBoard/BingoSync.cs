@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Modding;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using Logger = Modding.Logger;
@@ -73,15 +74,33 @@ namespace BingoBoard
         private readonly string[] COLOR_ORDER = { "pink", "red", "orange", "brown", "yellow", "green", "teal", "blue", "navy", "purple" };
         private readonly Color[] HIGHLIGHT_CYCLE = { Color.white, Color.red, Color.green, Color.blue };
 
+        private AudioSource audio;
+        private AudioClip ding;
+
         #region Initialization
         public void Initialize()
         {
             _canvas = CanvasUtil.CreateCanvas(RenderMode.ScreenSpaceCamera, new Vector2(1920, 1080));
             UnityEngine.Object.DontDestroyOnLoad(_canvas);
 
-            GameObject go = new GameObject();
-            _nb = go.AddComponent<NonBouncer>();
-            UnityEngine.Object.DontDestroyOnLoad(go);
+            GameObject nbgo = new GameObject();
+            _nb = nbgo.AddComponent<NonBouncer>();
+            UnityEngine.Object.DontDestroyOnLoad(nbgo);
+
+            GameObject audiogo = new GameObject();
+            audio = audiogo.AddComponent<AudioSource>();
+            UnityEngine.Object.DontDestroyOnLoad(audiogo);
+
+            string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "ding.wav");
+            Logger.Log(path);
+            if (File.Exists(path)){
+                Logger.Log("[BingoBoard] - ding.wav found");
+                var buffer = File.ReadAllBytes(path);
+                Logger.Log(buffer);
+                ding = WavUtils.ToAudioClip(buffer);
+                Logger.Log(ding);
+                audio.PlayOneShot(ding);
+            }
 
             try {
                 toggle = (KeyCode) Enum.Parse(typeof(KeyCode), BingoBoard.globalSettings.boardToggle);
@@ -247,6 +266,11 @@ namespace BingoBoard
                 }
             }
             t.color = Color.white;
+
+            if (ding != null) {
+                Logger.Log("Ding");
+                audio.PlayOneShot(ding);
+            }
         }
         #endregion
 
