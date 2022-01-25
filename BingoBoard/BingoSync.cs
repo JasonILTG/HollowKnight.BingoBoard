@@ -92,14 +92,10 @@ namespace BingoBoard
             UnityEngine.Object.DontDestroyOnLoad(audiogo);
 
             string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "ding.wav");
-            Logger.Log(path);
             if (File.Exists(path)){
                 Logger.Log("[BingoBoard] - ding.wav found");
                 var buffer = File.ReadAllBytes(path);
-                Logger.Log(buffer);
                 ding = WavUtils.ToAudioClip(buffer);
-                Logger.Log(ding);
-                audio.PlayOneShot(ding);
             }
 
             try {
@@ -266,11 +262,6 @@ namespace BingoBoard
                 }
             }
             t.color = Color.white;
-
-            if (ding != null) {
-                Logger.Log("Ding");
-                audio.PlayOneShot(ding);
-            }
         }
         #endregion
 
@@ -293,6 +284,7 @@ namespace BingoBoard
 
         private IEnumerator RefreshBoard(string roomID)
         {
+            bool changed = false;
             using (UnityWebRequest req = UnityWebRequest.Get($"https://bingosync.com/room/{roomID}/board")) {
                 yield return req.SendWebRequest();
 
@@ -311,6 +303,7 @@ namespace BingoBoard
                     string color = substring_between(req_board[i], "\"colors\": \"", "\"");
 
                     if (color != colors[slot]) {
+                        changed = true;
                         colors[slot] = color;
                         if (color == "blank") {
                             for (int j = 0; j < GOAL_COLOR_DIVISIONS; j++) {
@@ -336,6 +329,8 @@ namespace BingoBoard
                     goalNames[slot].GetComponent<Text>().text = GoalShortener.shorten(goal_name);
                 }
             }
+
+            if (changed) audio.PlayOneShot(ding);
         }
 
         private string[] sortColors(string color)
