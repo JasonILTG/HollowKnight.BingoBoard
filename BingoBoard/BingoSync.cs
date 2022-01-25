@@ -330,7 +330,8 @@ namespace BingoBoard
                 }
             }
 
-            if (changed) audio.PlayOneShot(ding);
+            if (changed && BingoBoard.localSettings.lastBoard == roomID && BingoBoard.globalSettings.notify) audio.PlayOneShot(ding);
+            if (board.activeSelf) BingoBoard.localSettings.lastBoard = roomID;
         }
 
         private string[] sortColors(string color)

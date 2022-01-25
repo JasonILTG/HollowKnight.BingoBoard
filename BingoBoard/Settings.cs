@@ -7,6 +7,7 @@ namespace BingoBoard
     [Serializable]
     public class SaveSettings
     {
+        public string lastBoard = "";
     }
 
     public struct Layout
@@ -34,5 +35,6 @@ namespace BingoBoard
     {
         public string boardUrl = "";
         public string boardToggle = "Tab";
+        public bool notify = true;
     }
 }
