@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace BingoUI
+namespace BingoBoard
 {
     public static class SpriteLoader
     {
@@ -48,7 +48,7 @@ namespace BingoUI
                 }
                 catch (Exception e)
                 {
-                    BingoUI.Instance.LogError(e);
+                    BingoBoard.Instance.LogError(e);
                 }
             }
         }

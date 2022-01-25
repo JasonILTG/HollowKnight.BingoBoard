@@ -50,6 +50,26 @@ namespace BingoBoard
         private readonly string[] COLOR_ORDER = { "pink", "red", "orange", "brown", "yellow", "green", "teal", "blue", "navy", "purple" };
         private readonly Color[] HIGHLIGHT_CYCLE = { Color.white, Color.red, Color.green, Color.blue };
 
+        public static BingoSync Instance
+        {
+            get
+            {
+                if (_instance != null) return _instance;
+
+                _instance = FindObjectOfType<BingoSync>();
+
+                if (_instance != null) return _instance;
+
+                Logger.LogWarn("Couldn't find BingoSync");
+
+                GameObject go = new GameObject();
+                _instance = go.AddComponent<BingoSync>();
+                DontDestroyOnLoad(go);
+
+                return _instance;
+            }
+        }
+
         public void Initialize()
         {
             _canvas = CanvasUtil.CreateCanvas(RenderMode.ScreenSpaceCamera, new Vector2(1920, 1080));
@@ -60,13 +80,13 @@ namespace BingoBoard
             UnityEngine.Object.DontDestroyOnLoad(go);
 
             try {
-                toggle = (KeyCode) Enum.Parse(typeof(KeyCode), BingoUI.globalSettings.boardToggle);
+                toggle = (KeyCode) Enum.Parse(typeof(KeyCode), BingoBoard.globalSettings.boardToggle);
             } catch {
                 toggle = KeyCode.Tab;
             }
 
-            _roomID = sanitizeID(BingoUI.globalSettings.boardUrl);
-            BingoUI.globalSettings.boardUrl = _roomID;
+            _roomID = sanitizeID(BingoBoard.globalSettings.boardUrl);
+            BingoBoard.globalSettings.boardUrl = _roomID;
 
             BuildMenu();
             BuildBoard();
@@ -162,7 +182,7 @@ namespace BingoBoard
             }
 
             board.SetActive(false);
-            Logger.Log("[BingoUI] - Bingo board creation done");
+            Logger.Log("[BingoBoard] - Bingo board creation done");
 
             _nb.StartCoroutine(ConstantRefresh(5f));
         }
@@ -175,8 +195,8 @@ namespace BingoBoard
                         if (Input.GetKeyDown(kc)) {
                             setToggle = false;
                             toggle = kc;
-                            BingoUI.globalSettings.boardToggle = kc.ToString();
-                            toggleKeyButton.GetComponent<Text>().text = $"Toggle: {BingoUI.globalSettings.boardToggle}";
+                            BingoBoard.globalSettings.boardToggle = kc.ToString();
+                            toggleKeyButton.GetComponent<Text>().text = $"Toggle: {BingoBoard.globalSettings.boardToggle}";
                             break;
                         }
                     }
@@ -198,26 +218,6 @@ namespace BingoBoard
             }
         }
 
-        public static BingoSync Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-
-                _instance = FindObjectOfType<BingoSync>();
-
-                if (_instance != null) return _instance;
-
-                Logger.LogWarn("Couldn't find BingoSync");
-
-                GameObject go = new GameObject();
-                _instance = go.AddComponent<BingoSync>();
-                DontDestroyOnLoad(go);
-
-                return _instance;
-            }
-        }
-
         public void SetToggleKey()
         {
             setToggle = true;
@@ -235,7 +235,7 @@ namespace BingoBoard
         private void ChangeBoard()
         {
             _roomID = sanitizeID(GUIUtility.systemCopyBuffer);
-            BingoUI.globalSettings.boardUrl = _roomID;
+            BingoBoard.globalSettings.boardUrl = _roomID;
             roomIDText.GetComponent<Text>().text = $"Room ID: {_roomID}";
             _nb.StartCoroutine(RefreshBoard(_roomID));
         }
@@ -362,7 +362,7 @@ namespace BingoBoard
                 form.AddField("room_name", substring_between(get.downloadHandler.text, "name=\"room_name\" value=\"", "\""));
                 form.AddField("creator_name", substring_between(get.downloadHandler.text, "name=\"creator_name\" value=\"", "\""));
                 form.AddField("game_name", substring_between(get.downloadHandler.text, "name=\"game_name\" value=\"", "\""));
-                form.AddField("player_name", "BingoUI");
+                form.AddField("player_name", "BingoBoard");
                 form.AddField("passphrase", pass);
 
                 Logger.Log(substring_between(get.downloadHandler.text, "name=\"encoded_room_uuid\" value=\"", "\""));
