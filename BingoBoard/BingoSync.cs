@@ -179,28 +179,12 @@ namespace BingoBoard
                 goalNames[i] = CanvasUtil.CreateTextPanel(goals[i], "Goal", 16, TextAnchor.MiddleCenter, new CanvasUtil.RectData(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.one));
                 goalNames[i].AddComponent<Outline>().effectColor = Color.black;
                 goalNames[i].GetComponent<Text>().color = Color.white;
-
-                Button highlightButton = goals[i].AddComponent<Button>();
-                int temp = i;
-                highlightButton.onClick.AddListener(() => CycleTextHighlight(temp));
             }
 
             board.SetActive(false);
             Logger.Log("[BingoBoard] - Bingo board creation done");
 
             _nb.StartCoroutine(ConstantRefresh(5f));
-        }
-
-        private void CycleTextHighlight(int i)
-        {
-            Text t = goalNames[i].GetComponent<Text>();
-            for (int c = 0; c < HIGHLIGHT_CYCLE.Length; c++) {
-                if (HIGHLIGHT_CYCLE[c] == t.color) {
-                    t.color = HIGHLIGHT_CYCLE[(c + 1) % HIGHLIGHT_CYCLE.Length];
-                    return;
-                }
-            }
-            t.color = Color.white;
         }
         #endregion
 
@@ -210,6 +194,8 @@ namespace BingoBoard
             try {
                 if (setToggle) {
                     foreach (KeyCode kc in Enum.GetValues(typeof(KeyCode))) {
+                        if (kc == KeyCode.Mouse0) continue;
+
                         if (Input.GetKeyDown(kc)) {
                             setToggle = false;
                             toggle = kc;
@@ -230,6 +216,15 @@ namespace BingoBoard
                             menu.SetActive(false);
                         }
                     }
+
+                    if (board.activeSelf && Input.GetKeyDown(KeyCode.Mouse0)) {
+                        Vector3 mousePos = Input.mousePosition;
+                        Vector3 firstPos = goals[0].transform.position;
+                        int xDiff = (int) Math.Floor(0.5f + (mousePos.x - firstPos.x) / (goals[1].transform.position.x - firstPos.x));
+                        int yDiff = (int) Math.Floor(0.5f + (mousePos.y - firstPos.y) / (goals[5].transform.position.y - firstPos.y));
+
+                        if (xDiff >=0 && xDiff < 5 && yDiff >= 0 && yDiff < 5) CycleTextHighlight(xDiff + yDiff * 5);
+                    }
                 }
             } catch (Exception e) {
                 Logger.LogError(e);
@@ -240,6 +235,18 @@ namespace BingoBoard
         {
             setToggle = true;
             toggleKeyButton.GetComponent<Text>().text = "Toggle: PRESS A KEY";
+        }
+
+        private void CycleTextHighlight(int i)
+        {
+            Text t = goalNames[i].GetComponent<Text>();
+            for (int c = 0; c < HIGHLIGHT_CYCLE.Length; c++) {
+                if (HIGHLIGHT_CYCLE[c] == t.color) {
+                    t.color = HIGHLIGHT_CYCLE[(c + 1) % HIGHLIGHT_CYCLE.Length];
+                    return;
+                }
+            }
+            t.color = Color.white;
         }
         #endregion
 
