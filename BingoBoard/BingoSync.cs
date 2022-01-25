@@ -272,7 +272,7 @@ namespace BingoBoard
             using (UnityWebRequest req = UnityWebRequest.Get($"https://bingosync.com/room/{roomID}/board")) {
                 yield return req.SendWebRequest();
 
-                if (req.isNetworkError || req.isHttpError) yield break;
+                if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError) yield break;
                 
                 string[] req_board = req.downloadHandler.text.Split('}');
                 for (int i = 0; i < 25; i++) {
