@@ -4,7 +4,7 @@ A tool for viewing Bingosync boards in-game. Current features include:
 
 - In-game togglable board display, that connects to Bingosync and shows you the board, including which colors have marked which goals.
 
-- Simple GUI for pasting in the Bingosync room ID and setting the toggle key.
+- Simple GUI for pasting in the Bingosync room ID and setting the toggle key (defaults to TAB).
 
 - Ability to highlight goals (similar to starring them on Bingosync) by clicking on them - cycles through white -> red -> blue -> green.
 
